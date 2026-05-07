@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SkillVault – AI Career Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0D1B3E;--navy-light:#1A2E5A;--blue:#1E40AF;--accent:#3B82F6;
+  --accent-glow:#60A5FA;--lavender:#C7D2FE;--lavender-light:#EEF2FF;
+  --white:#F8FAFF;--gray:#94A3B8;--gray-light:#E2E8F0;
+  --success:#10B981;--warning:#F59E0B;--danger:#EF4444;
+  --text:#1E293B;--text-muted:#64748B;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);overflow-x:hidden}
+.sv-app{display:flex;flex-direction:column;min-height:100vh;max-width:1280px;margin:0 auto}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:100;background:rgba(13,27,62,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(99,132,250,0.2);padding:0 32px;display:flex;align-items:center;gap:0;height:60px}
+.topbar-logo{display:flex;align-items:center;gap:10px;margin-right:36px;cursor:pointer}
+.logo-badge{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C7D2FE,#EEF2FF);display:flex;align-items:center;justify-content:center;border:2px solid rgba(99,132,250,0.4);font-size:13px;font-weight:800;font-family:'Syne',sans-serif;color:#0D1B3E;flex-shrink:0}
+.topbar-logo span{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--white);letter-spacing:1px}
+.topbar-nav{display:flex;align-items:center;gap:2px;flex:1}
+.nav-item{padding:7px 16px;border-radius:8px;cursor:pointer;font-size:13.5px;font-weight:500;color:rgba(248,250,255,0.65);transition:all .18s;display:flex;align-items:center;gap:6px}
+.nav-item:hover{color:var(--white);background:rgba(99,132,250,0.12)}
+.nav-item.active{color:var(--white);background:rgba(59,130,246,0.22);border:1px solid rgba(99,132,250,0.3)}
+.topbar-right{display:flex;align-items:center;gap:12px;margin-left:auto}
+.notif{position:relative}
+.notif-badge{position:absolute;top:-3px;right:-3px;width:16px;height:16px;border-radius:50%;background:var(--danger);color:white;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid rgba(13,27,62,0.97)}
+.avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--navy-light));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;cursor:pointer;border:2px solid rgba(99,132,250,0.4)}
+.bell-btn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center}
+
+/* MAIN */
+.main-content{flex:1;padding:28px 32px}
+.page{display:none}.page.active{display:block}
+
+/* CARDS */
+.card{background:white;border-radius:16px;border:1px solid var(--gray-light);box-shadow:0 2px 16px rgba(13,27,62,0.06);padding:24px;transition:all .2s}
+.card:hover{box-shadow:0 4px 28px rgba(13,27,62,0.1);transform:translateY(-1px)}
+.card-navy{background:var(--navy);border-color:rgba(99,132,250,0.2);color:white}
+.card-navy:hover{transform:none}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .18s;font-family:'DM Sans',sans-serif;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--blue));color:white;box-shadow:0 4px 14px rgba(59,130,246,0.35)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,0.45)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-secondary{background:var(--lavender-light);color:var(--blue);border:1px solid var(--lavender)}
+.btn-secondary:hover{background:var(--lavender)}
+.btn-ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn-ghost:hover{background:rgba(59,130,246,0.08)}
+.btn-sm{padding:7px 14px;font-size:12.5px}
+.btn-lg{padding:13px 30px;font-size:15px}
+.btn-outline-white{background:rgba(255,255,255,0.12);color:white;border:1px solid rgba(255,255,255,0.2);padding:13px 24px;font-size:15px;font-weight:600;border-radius:10px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-family:'DM Sans',sans-serif}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600}
+.badge-easy{background:#DCFCE7;color:#15803D}
+.badge-medium{background:#FEF9C3;color:#A16207}
+.badge-hard{background:#FEE2E2;color:#B91C1C}
+.badge-blue{background:var(--lavender-light);color:var(--blue)}
+.badge-success{background:#DCFCE7;color:#15803D}
+
+/* TYPOGRAPHY */
+.h1{font-family:'Syne',sans-serif;font-size:38px;font-weight:800;line-height:1.15}
+.h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:700}
+.h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700}
+.section-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--text)}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.mb-4{margin-bottom:16px}.mb-6{margin-bottom:24px}.mb-3{margin-bottom:12px}.mb-2{margin-bottom:8px}
+.mt-4{margin-top:16px}.mt-6{margin-top:24px}.w-full{width:100%}
+
+/* PROGRESS */
+.progress-track{background:var(--gray-light);border-radius:99px;height:8px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent-glow));transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+
+/* INPUT */
+.input{width:100%;padding:10px 14px;border-radius:10px;border:1.5px solid var(--gray-light);font-size:14px;font-family:'DM Sans',sans-serif;background:white;color:var(--text);transition:border-color .18s;outline:none}
+.input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+.input-icon{position:relative}
+.input-icon .input{padding-left:38px}
+.input-icon-left{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray);pointer-events:none}
+
+/* CHIP */
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:12.5px;font-weight:500;cursor:pointer;border:1.5px solid var(--gray-light);background:white;color:var(--text-muted);transition:all .15s}
+.chip:hover,.chip.active{background:var(--lavender-light);color:var(--blue);border-color:var(--lavender)}
+
+/* GLOW LINE */
+.glow-line{height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:99px;margin:24px 0}
+
+/* HERO */
+.hero-bg{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 60%,#1E3A8A 100%);border-radius:20px;padding:48px;position:relative;overflow:hidden;margin-bottom:28px}
+.hero-bg::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,0.18) 0%,transparent 70%)}
+.hero-bg::after{content:'';position:absolute;bottom:-40px;left:30%;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(99,132,250,0.1) 0%,transparent 70%)}
+
+/* STAT PILL */
+.stat-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:10px;padding:16px 20px}
+.stat-pill-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:white}
+.stat-pill-label{font-size:11.5px;color:rgba(255,255,255,0.65)}
+
+/* ROADMAP */
+.roadmap-wrap{display:flex;align-items:center}
+.roadmap-step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.roadmap-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:2px solid}
+.roadmap-circle.done{background:var(--success);border-color:var(--success);color:white}
+.roadmap-circle.active{background:var(--accent);border-color:var(--accent);color:white;box-shadow:0 0 16px rgba(59,130,246,0.4)}
+.roadmap-circle.pending{background:white;border-color:var(--gray-light);color:var(--gray)}
+.roadmap-connector{flex:1;height:2px;background:var(--gray-light);margin-top:-22px}
+.roadmap-connector.done{background:var(--success)}
+.roadmap-label{font-size:11.5px;font-weight:600;text-align:center;color:var(--text-muted)}
+.roadmap-label.active{color:var(--accent)}
+.roadmap-label.done{color:var(--success)}
+
+/* CHAT */
+.chat-wrap{display:grid;grid-template-columns:260px 1fr;gap:20px;height:calc(100vh - 140px)}
+.chat-sidebar{display:flex;flex-direction:column;gap:12px}
+.chat-main{display:flex;flex-direction:column;background:white;border-radius:16px;border:1px solid var(--gray-light);overflow:hidden;box-shadow:0 2px 16px rgba(13,27,62,0.06)}
+.chat-header{padding:16px 20px;background:var(--navy);display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(99,132,250,0.2)}
+.chat-dot{width:8px;height:8px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success)}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px}
+.chat-bubble{max-width:68%;padding:12px 16px;border-radius:14px;font-size:14px;line-height:1.55}
+.chat-bubble.user{background:linear-gradient(135deg,var(--accent),var(--blue));color:white;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-bubble.ai{background:var(--lavender-light);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid var(--lavender)}
+.chat-bubble.ai .sender{font-size:11px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.typing-indicator{display:flex;gap:4px;align-items:center;padding:12px 16px;background:var(--lavender-light);border-radius:14px;border-bottom-left-radius:4px;width:fit-content;border:1px solid var(--lavender)}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typingBounce 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.chat-composer{padding:16px 20px;border-top:1px solid var(--gray-light);display:flex;gap:10px;align-items:flex-end}
+.chat-chips{padding:10px 20px;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--gray-light);background:var(--lavender-light)}
+
+/* ONBOARDING */
+.onboard-wrap{min-height:100vh;background:linear-gradient(135deg,var(--navy) 0%,#1E3A8A 100%);display:flex;align-items:center;justify-content:center;padding:40px}
+.onboard-card{background:white;border-radius:24px;padding:48px 56px;width:580px;max-width:100%;box-shadow:0 24px 80px rgba(0,0,0,0.3)}
+.step-dots{display:flex;gap:8px;margin-bottom:32px}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--gray-light);transition:all .3s}
+.step-dot.active{background:var(--accent);width:24px;border-radius:4px}
+.step-dot.done{background:var(--success)}
+.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0}
+.role-card{padding:16px;border-radius:12px;border:2px solid var(--gray-light);cursor:pointer;transition:all .18s;text-align:center}
+.role-card:hover,.role-card.selected{border-color:var(--accent);background:var(--lavender-light)}
+
+/* TEST */
+.test-player{display:grid;grid-template-columns:200px 1fr 240px;gap:20px;height:calc(100vh - 160px)}
+.q-nav-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-content:start}
+.q-num{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(--gray-light);background:white;transition:all .15s}
+.q-num.answered{background:var(--success);color:white;border-color:var(--success)}
+.q-num.current{background:var(--accent);color:white;border-color:var(--accent)}
+.option-card{padding:14px 18px;border-radius:12px;border:2px solid var(--gray-light);cursor:pointer;display:flex;align-items:center;gap:12px;font-size:14px;transition:all .15s;margin-bottom:10px}
+.option-card:hover{border-color:var(--accent);background:var(--lavender-light)}
+.option-card.selected{border-color:var(--accent);background:var(--lavender-light)}
+.option-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray-light);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+
+/* SLOT */
+.slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.slot{padding:10px;border-radius:10px;border:1.5px solid var(--gray-light);text-align:center;cursor:pointer;font-size:13px;font-weight:500;transition:all .15s}
+.slot:hover,.slot.selected{border-color:var(--accent);background:var(--lavender-light);color:var(--blue)}
+.slot.unavailable{opacity:.4;cursor:not-allowed;pointer-events:none}
+
+/* BAR CHART */
+.bar-chart{display:flex;align-items:flex-end;gap:12px;height:120px}
+.bar-item{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1}
+.bar{border-radius:6px 6px 0 0;width:100%}
+.bar-label{font-size:11px;color:var(--text-muted);text-align:center;font-weight:500}
+.bar-val{font-size:12px;font-weight:700;color:var(--text)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--lavender-light);padding:4px;border-radius:12px;width:fit-content;margin-bottom:20px}
+.tab{padding:8px 18px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;color:var(--text-muted);transition:all .18s}
+.tab.active{background:white;color:var(--blue);box-shadow:0 2px 8px rgba(13,27,62,0.08)}
+
+/* PROFILE AVATAR */
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--navy));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:white;font-family:'Syne',sans-serif}
+
+/* FILTER */
+.filter-bar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;align-items:center}
+select.filter-select{padding:8px 12px;border-radius:8px;border:1.5px solid var(--gray-light);font-size:13px;font-family:'DM Sans',sans-serif;background:white;color:var(--text);cursor:pointer;outline:none}
+select.filter-select:focus{border-color:var(--accent)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .4s ease both}
+.fade-up-2{animation:fadeUp .4s .08s ease both}
+.fade-up-3{animation:fadeUp .4s .16s ease both}
+.fade-up-4{animation:fadeUp .4s .24s ease both}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--lavender);border-radius:99px}
+</style>
+</head>
+<body>
+
+<!-- ONBOARDING -->
+<div id="onboarding" class="onboard-wrap">
+  <div class="onboard-card">
+    <div class="step-dots" id="stepDots"></div>
+    <div id="onboardSteps"></div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app" class="sv-app" style="display:none">
+  <nav class="topbar">
+    <div class="topbar-logo" onclick="navigate('home')">
+      <div class="logo-badge">SV</div>
+      <span>SKILLVAULT</span>
+    </div>
+    <div class="topbar-nav" id="topbarNav"></div>
+    <div class="topbar-right">
+      <div class="notif">
+        <button class="bell-btn">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+        </button>
+        <div class="notif-badge">2</div>
+      </div>
+      <div class="avatar" onclick="navigate('profile')">AK</div>
+    </div>
+  </nav>
+  <main class="main-content" id="mainContent"></main>
+</div>
+
+<script>
+// ── SVG Icons ──────────────────────────────────────────────
+const ICONS = {
+  home:`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>`,
+  test:`<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="2"/>`,
+  chat:`<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>`,
+  consult:`<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>`,
+  companies:`<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>`,
+  profile:`<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>`,
+  search:`<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>`,
+  send:`<line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>`,
+  clock:`<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>`,
+  star:`<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>`,
+  arrow:`<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>`,
+  check:`<polyline points="20 6 9 17 4 12"/>`,
+  plus:`<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>`,
+  book:`<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>`,
+  lightning:`<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`,
+  video:`<polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>`,
+  flag:`<path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/>`,
+};
+function icon(name,size=16,color='currentColor'){
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]||''}</svg>`;
+}
+
+// ── Navigation ─────────────────────────────────────────────
+const NAV_ITEMS=[
+  {id:'home',label:'Home',icon:'home'},
+  {id:'tests',label:'Tests',icon:'test'},
+  {id:'chatbot',label:'Chatbot',icon:'chat'},
+  {id:'consultation',label:'Consultation',icon:'consult'},
+  {id:'companies',label:'Companies',icon:'companies'},
+  {id:'profile',label:'Profile',icon:'profile'},
+];
+let currentPage='home';
+
+function navigate(page){
+  currentPage=page;
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active',el.dataset.page===page);
+  });
+  renderPage(page);
+}
+
+function buildNav(){
+  const nav=document.getElementById('topbarNav');
+  nav.innerHTML=NAV_ITEMS.map(n=>`
+    <div class="nav-item${n.id===currentPage?' active':''}" data-page="${n.id}" onclick="navigate('${n.id}')">
+      ${icon(n.icon,15,n.id===currentPage?'white':'rgba(248,250,255,0.65)')}
+      ${n.label}
+    </div>`).join('');
+}
+
+function renderPage(page){
+  const mc=document.getElementById('mainContent');
+  mc.innerHTML='';
+  buildNav();
+  const pages={home:renderHome,tests:renderTests,chatbot:renderChatbot,consultation:renderConsultation,companies:renderCompanies,profile:renderProfile};
+  if(pages[page]) pages[page](mc);
+}
+
+// ── ONBOARDING ─────────────────────────────────────────────
+let onboardStep=0;
+const onboardData={role:'',level:'',goals:[]};
+const ROLES=[{icon:'💻',label:'Software Engineer'},{icon:'📊',label:'Data Analyst'},{icon:'🎨',label:'Product Designer'},{icon:'📈',label:'Product Manager'},{icon:'🔒',label:'Cybersecurity'},{icon:'☁️',label:'Cloud / DevOps'}];
+
+function renderOnboard(){
+  const dots=document.getElementById('stepDots');
+  dots.innerHTML=[0,1,2,3,4].map(i=>`<div class="step-dot ${i===onboardStep?'active':i<onboardStep?'done':''}"></div>`).join('');
+
+  const container=document.getElementById('onboardSteps');
+  const steps=[renderOnboardLogin,renderOnboardRole,renderOnboardExp,renderOnboardGoals,renderOnboardSummary];
+  container.innerHTML=steps[onboardStep]();
+
+  // Back button
+  if(onboardStep>0){
+    container.innerHTML+=`<button onclick="onboardBack()" style="margin-top:16px;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:13px;display:flex;align-items:center;gap:4px">← Back</button>`;
+  }
+}
+
+function renderOnboardLogin(){
+  return `<div class="fade-up">
+    <div style="text-align:center;margin-bottom:32px">
+      <div style="display:flex;justify-content:center;margin-bottom:20px">
+        <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#C7D2FE,#EEF2FF);border:3px solid #1E40AF;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;font-family:'Syne',sans-serif;color:#0D1B3E">SV</div>
+      </div>
+      <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:#0D1B3E;margin-bottom:6px">Welcome to SkillVault</div>
+      <div style="color:var(--text-muted);font-size:14px">Your AI-powered career interview platform</div>
+    </div>
+    <div class="tabs"><div class="tab active">Sign In</div><div class="tab">Sign Up</div></div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div><label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block">Email address</label><input class="input" placeholder="you@example.com" type="email" /></div>
+      <div><label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block">Password</label><input class="input" placeholder="••••••••" type="password" /></div>
+      <button class="btn btn-primary w-full" style="justify-content:center;margin-top:8px" onclick="onboardNext()">Sign In ${icon('arrow',15,'white')}</button>
+      <div style="text-align:center;font-size:13px;color:var(--text-muted)">Or continue with <span style="color:var(--blue);font-weight:600;cursor:pointer">Google</span></div>
+    </div>
+  </div>`;
+}
+
+function renderOnboardRole(){
+  return `<div class="fade-up">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px">Choose your domain</div>
+    <div style="color:var(--text-muted);font-size:14px;margin-bottom:4px">What field are you preparing for?</div>
+    <div class="role-grid">
+      ${ROLES.map(r=>`<div class="role-card${onboardData.role===r.label?' selected':''}" onclick="selectRole('${r.label}')"><div style="font-size:24px;margin-bottom:6px">${r.icon}</div><div style="font-size:13px;font-weight:600">${r.label}</div></div>`).join('')}
+    </div>
+    <button class="btn btn-primary" onclick="onboardNext()" ${!onboardData.role?'disabled':''} style="opacity:${onboardData.role?1:0.5}">Continue ${icon('arrow',15,'white')}</button>
+  </div>`;
+}
+
+function renderOnboardExp(){
+  const levels=['Fresher (0–1 yrs)','Junior (1–3 yrs)','Mid-level (3–6 yrs)','Senior (6+ yrs)'];
+  return `<div class="fade-up">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px">Your experience level</div>
+    <div style="color:var(--text-muted);font-size:14px;margin-bottom:20px">This helps us personalize your practice tests</div>
+    ${levels.map(l=>`<div class="option-card${onboardData.level===l?' selected':''}" onclick="selectLevel('${l}')" style="margin-bottom:10px">
+      <div class="option-circle" style="border-color:${onboardData.level===l?'var(--accent)':'var(--gray-light)'};color:${onboardData.level===l?'var(--accent)':'var(--gray)'}">${onboardData.level===l?'✓':''}</div>
+      <span style="font-weight:500">${l}</span>
+    </div>`).join('')}
+    <button class="btn btn-primary mt-4" onclick="onboardNext()" ${!onboardData.level?'disabled':''} style="opacity:${onboardData.level?1:0.5}">Continue ${icon('arrow',15,'white')}</button>
+  </div>`;
+}
+
+function renderOnboardGoals(){
+  const goals=[{icon:'📝',label:'Mock Tests',desc:'Practice with real interview questions'},{icon:'🤖',label:'AI Chatbot',desc:'Get personalized AI guidance'},{icon:'👨‍💼',label:'Paid Consultation',desc:'1:1 sessions with career experts'}];
+  return `<div class="fade-up">
+    <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px">What's your goal?</div>
+    <div style="color:var(--text-muted);font-size:14px;margin-bottom:20px">Select all that apply</div>
+    ${goals.map(g=>`<div class="option-card${onboardData.goals.includes(g.label)?' selected':''}" onclick="toggleGoal('${g.label}')" style="margin-bottom:10px">
+      <div style="font-size:20px">${g.icon}</div>
+      <div><div style="font-weight:600;font-size:14px">${g.label}</div><div style="font-size:12px;color:var(--text-muted)">${g.desc}</div></div>
+    </div>`).join('')}
+    <button class="btn btn-primary mt-4" onclick="onboardNext()" ${!onboardData.goals.length?'disabled':''} style="opacity:${onboardData.goals.length?1:0.5}">Continue ${icon('arrow',15,'white')}</button>
+  </div>`;
+}
+
+function renderOnboardSummary(){
+  return `<div class="fade-up">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:40px;margin-bottom:10px">🎯</div>
+      <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:6px">You're all set!</div>
+      <div style="color:var(--text-muted);font-size:14px">Your personalized SkillVault workspace is ready</div>
+    </div>
+    <div style="background:var(--lavender-light);border-radius:14px;padding:20px;margin-bottom:24px">
+      ${[['Domain',onboardData.role||'Software Engineer'],['Level',onboardData.level||'Fresher (0–1 yrs)'],['Goals',onboardData.goals.join(', ')||'Mock Tests, AI Chatbot']].map(([l,v])=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-bottom:8px">
+          <span style="color:var(--text-muted);font-weight:500">${l}</span>
+          <span style="font-weight:600;color:var(--navy)">${v}</span>
+        </div>`).join('')}
+    </div>
+    <button class="btn btn-primary w-full" style="justify-content:center" onclick="completeOnboard()">Skill Up Today! 🚀</button>
+  </div>`;
+}
+
+function selectRole(r){onboardData.role=r;renderOnboard()}
+function selectLevel(l){onboardData.level=l;renderOnboard()}
+function toggleGoal(g){
+  const i=onboardData.goals.indexOf(g);
+  if(i>-1)onboardData.goals.splice(i,1);else onboardData.goals.push(g);
+  renderOnboard();
+}
+function onboardNext(){onboardStep++;renderOnboard()}
+function onboardBack(){onboardStep--;renderOnboard()}
+function completeOnboard(){
+  document.getElementById('onboarding').style.display='none';
+  const app=document.getElementById('app');
+  app.style.display='flex';
+  buildNav();
+  renderPage('home');
+}
+
+// ── HOME PAGE ──────────────────────────────────────────────
+function renderHome(mc){
+  mc.innerHTML=`
+  <div class="hero-bg fade-up">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <div style="max-width:560px">
+        <div style="font-size:11.5px;font-weight:700;letter-spacing:2px;color:var(--lavender);margin-bottom:12px;text-transform:uppercase">AI-Powered Career Platform</div>
+        <div style="font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:white;line-height:1.1;margin-bottom:16px">Skill Up<br><span style="color:var(--lavender)">Today.</span></div>
+        <div style="font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:28px;line-height:1.6">Bridge the gap between where you are and where you want to be. Practice, improve, and land your dream job with AI-powered mock interviews.</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-lg" onclick="navigate('tests')">${icon('test',16,'white')} Start Mock Test</button>
+          <button class="btn-outline-white" onclick="navigate('chatbot')">${icon('chat',16,'white')} Chat with AI</button>
+          <button class="btn-outline-white" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.8)" onclick="navigate('consultation')">${icon('video',16,'rgba(255,255,255,0.8)')} Book Consultation</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:12px">
+        ${[['8','Tests Done'],['72%','Readiness'],['14','AI Sessions']].map(([v,l])=>`
+          <div class="stat-pill" style="flex-direction:column;align-items:center;padding:16px 20px">
+            <div class="stat-pill-val">${v}</div><div class="stat-pill-label">${l}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2 fade-up-2" style="margin-bottom:24px">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <span class="section-title">Your Career Roadmap</span>
+        <span class="badge badge-blue">Step 3 of 4</span>
+      </div>
+      <div class="roadmap-wrap" style="margin-bottom:24px">
+        ${[{label:'Learn',status:'done'},{label:'Practice',status:'done'},{label:'Improve',status:'active'},{label:'Interview\nReady',status:'pending'}].map((s,i,arr)=>`
+          <div class="roadmap-step">
+            <div class="roadmap-circle ${s.status}">${s.status==='done'?'✓':i+1}</div>
+            <div class="roadmap-label ${s.status}" style="white-space:pre">${s.label}</div>
+          </div>
+          ${i<arr.length-1?`<div class="roadmap-connector ${s.status==='done'?'done':''}"></div>`:''}`).join('')}
+      </div>
+      <div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">
+          <span style="font-weight:600">Interview Readiness</span>
+          <span style="font-weight:700;color:var(--accent)">72%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:72%"></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:16px">
+        ${[['8','Tests Done','var(--accent)'],['76%','Avg Score','var(--success)'],['5d 🔥','Streak','var(--warning)']].map(([v,l,c])=>`
+          <div style="background:var(--lavender-light);border-radius:10px;padding:10px 12px;text-align:center">
+            <div style="font-size:18px;font-weight:800;color:${c};font-family:'Syne',sans-serif">${v}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${l}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="card card-navy" style="display:flex;flex-direction:column;justify-content:space-between">
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+          <div style="width:40px;height:40px;border-radius:12px;background:rgba(99,132,250,0.2);display:flex;align-items:center;justify-content:center">${icon('lightning',20,'var(--lavender)')}</div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:white;font-size:15px">AI Interview Coach</div>
+            <div style="font-size:12px;color:rgba(255,255,255,0.55)">Powered by Claude AI</div>
+          </div>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success)"></div>
+            <span style="font-size:11.5px;color:rgba(255,255,255,0.6)">Online</span>
+          </div>
+        </div>
+        <div style="background:rgba(255,255,255,0.07);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px">Last message</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.8);line-height:1.5">"Here's a study plan for your System Design interview in 2 weeks..."</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          ${['Mock interview','Study plan','Resume tips'].map(c=>`<div style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:5px 12px;font-size:12px;color:rgba(255,255,255,0.75);cursor:pointer">${c}</div>`).join('')}
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:18px;width:100%;justify-content:center" onclick="navigate('chatbot')">Open Chatbot ${icon('chat',15,'white')}</button>
+    </div>
+  </div>
+
+  <div class="fade-up-3" style="margin-bottom:24px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <span class="section-title">Featured Mock Tests</span>
+      <button class="btn btn-ghost btn-sm" onclick="navigate('tests')">View All ${icon('arrow',13)}</button>
+    </div>
+    <div class="grid-3">
+      ${[{title:'Full Stack JS Interview',diff:'medium',dur:'45 min',domain:'Engineering'},{title:'System Design Basics',diff:'hard',dur:'60 min',domain:'Engineering'},{title:'Product Sense Interview',diff:'easy',dur:'30 min',domain:'PM'}].map(t=>`
+        <div class="card" style="cursor:pointer">
+          <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+            <span class="badge badge-${t.diff}">${t.diff}</span>
+            <span style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px">${icon('clock',12,'var(--text-muted)')} ${t.dur}</span>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:6px">${t.title}</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:14px">${t.domain} · 30 Questions</div>
+          <button class="btn btn-primary btn-sm w-full" style="justify-content:center" onclick="navigate('tests')">Start Test</button>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <div class="grid-2 fade-up-4" style="margin-bottom:24px">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <span class="section-title">Top Companies</span>
+        <button class="btn btn-ghost btn-sm" onclick="navigate('companies')">View All ${icon('arrow',13)}</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px">
+        ${['Google','Microsoft','Amazon','Meta','Flipkart','Infosys','TCS','Wipro','Zomato',"BYJU'S"].map(c=>`
+          <div style="background:var(--lavender-light);border-radius:8px;padding:8px 4px;text-align:center;font-size:11px;font-weight:700;color:var(--navy);cursor:pointer;transition:background .15s" onmouseover="this.style.background='var(--lavender)'" onmouseout="this.style.background='var(--lavender-light)'">${c}</div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px"><span class="section-title">Recent Activity</span></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        ${[{icon:'📝',title:'JS Arrays & Closures',sub:'Score: 84% · 2h ago',color:'var(--success)'},{icon:'🤖',title:'AI Chat: Study plan created',sub:'Yesterday · 12 messages',color:'var(--accent)'},{icon:'📅',title:'Consultation with Rahul S.',sub:'Tomorrow, 4:00 PM',color:'var(--warning)'}].map(a=>`
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--lavender-light);border-radius:10px">
+            <div style="font-size:20px">${a.icon}</div>
+            <div style="flex:1">
+              <div style="font-size:13.5px;font-weight:600">${a.title}</div>
+              <div style="font-size:12px;color:var(--text-muted)">${a.sub}</div>
+            </div>
+            <div style="width:6px;height:6px;border-radius:50%;background:${a.color}"></div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── TESTS PAGE ─────────────────────────────────────────────
+const TESTS=[
+  {id:1,title:'JavaScript Fundamentals',domain:'Frontend',difficulty:'easy',duration:'30 min',questions:25,tags:['JS','ES6','Arrays'],desc:'Cover core JS concepts: closures, prototypes, async/await, and ES6+ features.'},
+  {id:2,title:'System Design Interview',domain:'Engineering',difficulty:'hard',duration:'60 min',questions:15,tags:['Architecture','Scalability','Databases'],desc:'Design scalable systems. Cover load balancing, caching, microservices, and database sharding.'},
+  {id:3,title:'Data Structures & Algorithms',domain:'CS Fundamentals',difficulty:'medium',duration:'45 min',questions:30,tags:['Arrays','Trees','DP'],desc:'Practice common DSA interview questions from top tech companies.'},
+  {id:4,title:'React & Frontend Ecosystem',domain:'Frontend',difficulty:'medium',duration:'35 min',questions:20,tags:['React','Hooks','State'],desc:'Hooks, state management, performance optimization, and component patterns.'},
+  {id:5,title:'SQL & Database Design',domain:'Backend',difficulty:'medium',duration:'40 min',questions:25,tags:['SQL','Indexing','Normalization'],desc:'Complex queries, joins, indexing strategies, and database normalization.'},
+  {id:6,title:'Behavioral Interview Prep',domain:'All Roles',difficulty:'easy',duration:'25 min',questions:15,tags:['STAR','Leadership','Teamwork'],desc:'Practice structured behavioral responses using the STAR method.'},
+];
+const SAMPLE_QS=[
+  {q:'What is a closure in JavaScript?',options:['A function with its own lexical scope','A way to close browser tabs','A type of loop','An async pattern'],ans:0},
+  {q:"Which array method returns a new array with transformed elements?",options:['filter()','map()','reduce()','find()'],ans:1},
+  {q:"What does 'use strict' do in JavaScript?",options:['Enables ES6 features','Enforces stricter parsing and error handling','Compresses the code','Enables async support'],ans:1},
+  {q:'What is event bubbling?',options:['Events fire from child to parent','Events fire from parent to child','Events fire in random order','Events fire only once'],ans:0},
+  {q:'What is the output of typeof null?',options:['"null"','"undefined"','"object"','"boolean"'],ans:2},
+];
+let testState={view:'library',selected:null,currentQ:0,answers:{},timeLeft:2700,timerInterval:null};
+
+function renderTests(mc){
+  if(testState.view==='library') renderTestLibrary(mc);
+  else if(testState.view==='detail') renderTestDetail(mc);
+  else if(testState.view==='player') renderTestPlayer(mc);
+  else if(testState.view==='results') renderTestResults(mc);
+}
+
+function renderTestLibrary(mc){
+  mc.innerHTML=`
+  <div class="fade-up">
+    <div class="h2 mb-6">Mock Test Series</div>
+    <div class="filter-bar">
+      <div class="input-icon" style="max-width:280px">
+        <span class="input-icon-left">${icon('search',15,'var(--gray)')}</span>
+        <input class="input" placeholder="Search tests..." />
+      </div>
+      ${['All Domains','Frontend','Backend','CS Fundamentals','Product'].map((f,i)=>`
+        <div class="chip${i===0?' active':''}">${f}</div>`).join('')}
+      <select class="filter-select"><option>All Levels</option><option>Easy</option><option>Medium</option><option>Hard</option></select>
+      <select class="filter-select"><option>Any Duration</option><option>&lt; 30 min</option><option>30–60 min</option><option>&gt; 60 min</option></select>
+    </div>
+    <div style="font-size:13px;font-weight:700;color:var(--text-muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:1px">Featured Mock Tests</div>
+    <div class="grid-3">
+      ${TESTS.map(t=>`
+        <div class="card" style="cursor:pointer" onclick="openTestDetail(${t.id})">
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+            <span class="badge badge-${t.difficulty}">${t.difficulty}</span>
+            <span style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px">${icon('clock',11,'var(--text-muted)')} ${t.duration}</span>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px;line-height:1.3">${t.title}</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">${t.domain} · ${t.questions} Questions</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+            ${t.tags.slice(0,2).map(tag=>`<span class="badge badge-blue" style="font-size:11px">${tag}</span>`).join('')}
+          </div>
+          <button class="btn btn-primary btn-sm w-full" style="justify-content:center" onclick="event.stopPropagation();openTestDetail(${t.id})">Start Test</button>
+        </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function openTestDetail(id){
+  testState.selected=TESTS.find(t=>t.id===id);
+  testState.view='detail';
+  renderPage('tests');
+}
+
+function renderTestDetail(mc){
+  const t=testState.selected;
+  mc.innerHTML=`
+  <div class="fade-up">
+    <button onclick="backToLibrary()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:20px">← Back to Library</button>
+    <div class="grid-2">
+      <div>
+        <span class="badge badge-${t.difficulty}" style="margin-bottom:10px;display:inline-flex">${t.difficulty}</span>
+        <div class="h2 mb-3">${t.title}</div>
+        <div style="font-size:14.5px;line-height:1.6;color:var(--text-muted);margin-bottom:24px">${t.desc}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px">
+          ${[['Questions',t.questions,'test'],['Duration',t.duration,'clock'],['Domain',t.domain,'book'],['Difficulty',t.difficulty,'star']].map(([l,v,ic])=>`
+            <div style="background:var(--lavender-light);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px">
+              ${icon(ic,16,'var(--blue)')}
+              <div><div style="font-size:11px;color:var(--text-muted)">${l}</div><div style="font-weight:700;font-size:14px">${v}</div></div>
+            </div>`).join('')}
+        </div>
+        <div style="margin-bottom:20px">
+          <div style="font-weight:700;margin-bottom:10px;font-size:14px">Skill Tags</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${t.tags.map(tag=>`<div class="chip active">${tag}</div>`).join('')}
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="startTestPlayer()">Begin Mock Test ${icon('arrow',16,'white')}</button>
+      </div>
+      <div class="card card-navy">
+        <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:white;margin-bottom:16px">What to expect</div>
+        ${['Multiple choice questions with single correct answer','Timer starts when you begin — manage your time','You can navigate between questions freely','Results with detailed feedback shown after submission','AI coach available to explain weak areas after test'].map((p,i)=>`
+          <div style="display:flex;gap:10px;margin-bottom:10px">
+            <div style="width:20px;height:20px;border-radius:50%;background:rgba(99,132,250,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;color:var(--lavender)">${i+1}</div>
+            <span style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.5">${p}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function backToLibrary(){
+  testState.view='library';
+  if(testState.timerInterval) clearInterval(testState.timerInterval);
+  renderPage('tests');
+}
+
+function startTestPlayer(){
+  testState.view='player';testState.currentQ=0;testState.answers={};testState.timeLeft=2700;
+  renderPage('tests');
+  startTimer();
+}
+
+function startTimer(){
+  if(testState.timerInterval) clearInterval(testState.timerInterval);
+  testState.timerInterval=setInterval(()=>{
+    if(testState.timeLeft>0){testState.timeLeft--;updateTimer();}
+    else clearInterval(testState.timerInterval);
+  },1000);
+}
+
+function updateTimer(){
+  const el=document.getElementById('timerDisplay');
+  if(el){
+    const s=testState.timeLeft;
+    el.textContent=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+    el.style.color=s<300?'var(--danger)':'var(--blue)';
+    el.parentElement.style.background=s<300?'#FEE2E2':'var(--lavender-light)';
+  }
+}
+
+function renderTestPlayer(mc){
+  const s=testState.timeLeft;
+  const timeStr=`${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  mc.innerHTML=`
+  <div class="fade-up">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div class="h3">${testState.selected.title}</div>
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="background:var(--lavender-light);color:var(--blue);border-radius:10px;padding:8px 16px;font-family:'Syne',sans-serif;font-size:18px;font-weight:800;display:flex;align-items:center;gap:6px">
+          ${icon('clock',15,'var(--blue)')}
+          <span id="timerDisplay">${timeStr}</span>
+        </div>
+        <button class="btn btn-primary" onclick="submitTest()">Submit Test</button>
+      </div>
+    </div>
+    <div class="test-player">
+      <div class="card" style="align-content:start">
+        <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text-muted)">QUESTIONS</div>
+        <div class="q-nav-grid">
+          ${SAMPLE_QS.map((_,i)=>`<div class="q-num${testState.answers[i]!==undefined?' answered':''}${testState.currentQ===i?' current':''}" onclick="goToQ(${i})">${i+1}</div>`).join('')}
+        </div>
+        <div class="glow-line"></div>
+        <div style="font-size:12px;color:var(--text-muted)">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><div style="width:12px;height:12px;border-radius:3px;background:var(--accent)"></div> Current</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px"><div style="width:12px;height:12px;border-radius:3px;background:var(--success)"></div> Answered</div>
+          <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:3px;background:var(--gray-light)"></div> Unanswered</div>
+        </div>
+      </div>
+      <div class="card" id="questionPanel"></div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card" style="padding:16px">
+          <div style="font-size:13px;font-weight:700;margin-bottom:10px">Test Info</div>
+          ${[['Questions',SAMPLE_QS.length],['Answered',Object.keys(testState.answers).length],['Remaining',SAMPLE_QS.length-Object.keys(testState.answers).length]].map(([l,v])=>`
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px">
+              <span style="color:var(--text-muted)">${l}</span><strong id="stat-${l}">${v}</strong>
+            </div>`).join('')}
+        </div>
+        <div class="card" style="padding:16px;background:var(--lavender-light);border:1px solid var(--lavender)">
+          <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px">💡 Quick Tip</div>
+          <div style="font-size:12px;color:var(--text-muted);line-height:1.5">For MCQs, eliminate obviously wrong answers first, then choose the best remaining option.</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const panel=document.getElementById('questionPanel');
+  if(!panel) return;
+  const q=SAMPLE_QS[testState.currentQ];
+  const answered=Object.keys(testState.answers).length;
+  panel.innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:20px">
+      <span style="color:var(--text-muted);font-size:13px;font-weight:600">Question ${testState.currentQ+1} of ${SAMPLE_QS.length}</span>
+      <div class="progress-track" style="width:200px;margin-top:4px"><div class="progress-fill" style="width:${(answered/SAMPLE_QS.length)*100}%"></div></div>
+    </div>
+    <div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:24px;line-height:1.4">${q.q}</div>
+    ${q.options.map((opt,i)=>`
+      <div class="option-card${testState.answers[testState.currentQ]===i?' selected':''}" onclick="selectAnswer(${i})">
+        <div class="option-circle" style="border-color:${testState.answers[testState.currentQ]===i?'var(--accent)':'var(--gray-light)'};color:${testState.answers[testState.currentQ]===i?'var(--accent)':'var(--gray)'}">
+          ${testState.answers[testState.currentQ]===i?'✓':String.fromCharCode(65+i)}
+        </div>
+        ${opt}
+      </div>`).join('')}
+    <div style="display:flex;justify-content:space-between;margin-top:16px">
+      <button class="btn btn-secondary btn-sm" onclick="prevQ()" ${testState.currentQ===0?'disabled':''}>← Prev</button>
+      ${testState.currentQ<SAMPLE_QS.length-1?`<button class="btn btn-primary btn-sm" onclick="nextQ()">Save & Next →</button>`:`<button class="btn btn-primary btn-sm" onclick="submitTest()">Submit Test ✓</button>`}
+    </div>`;
+}
+
+function goToQ(i){testState.currentQ=i;renderQuestion();updateQNav()}
+function prevQ(){if(testState.currentQ>0){testState.currentQ--;renderQuestion();updateQNav()}}
+function nextQ(){if(testState.currentQ<SAMPLE_QS.length-1){testState.currentQ++;renderQuestion();updateQNav()}}
+function selectAnswer(i){testState.answers[testState.currentQ]=i;renderQuestion();updateQNav()}
+function updateQNav(){
+  document.querySelectorAll('.q-num').forEach((el,i)=>{
+    el.className='q-num'+(testState.answers[i]!==undefined?' answered':'')+(testState.currentQ===i?' current':'');
+  });
+}
+function submitTest(){
+  if(testState.timerInterval) clearInterval(testState.timerInterval);
+  testState.view='results';
+  renderPage('tests');
+}
+
+function renderTestResults(mc){
+  mc.innerHTML=`
+  <div class="fade-up">
+    <button onclick="backToLibrary()" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:20px">← Back to Tests</button>
+    <div class="h2 mb-6">Test Results</div>
+    <div class="grid-2" style="margin-bottom:20px">
+      <div class="card card-navy" style="text-align:center">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:8px">Your Score</div>
+        <div style="font-family:'Syne',sans-serif;font-size:64px;font-weight:800;color:white;line-height:1">72</div>
+        <div style="font-size:14px;color:rgba(255,255,255,0.6);margin-bottom:16px">/ 100 points</div>
+        <div style="display:flex;gap:12px;justify-content:center">
+          <div style="background:rgba(255,255,255,0.1);border-radius:10px;padding:8px 16px;font-size:13px;color:rgba(255,255,255,0.8)">4/5 Correct</div>
+          <div style="background:rgba(16,185,129,0.2);border-radius:10px;padding:8px 16px;font-size:13px;color:var(--success)">Above Average ↑</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title mb-4">Performance by Area</div>
+        <div class="bar-chart" style="margin-bottom:8px">
+          ${[{l:'JS Core',v:85,c:'var(--success)'},{l:'Arrays',v:70,c:'var(--accent)'},{l:'Async',v:45,c:'var(--warning)'},{l:'Closures',v:50,c:'var(--danger)'},{l:'ES6+',v:90,c:'var(--success)'}].map(b=>`
+            <div class="bar-item">
+              <div class="bar-val">${b.v}%</div>
+              <div class="bar" style="height:${b.v}%;background:${b.c};opacity:.85"></div>
+              <div class="bar-label">${b.l}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="section-title mb-4">Strong Areas ✅</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+          ${['JS Basics','Arrays','ES6'].map(s=>`<span class="badge" style="background:#DCFCE7;color:#15803D;font-size:13px">${s}</span>`).join('')}
+        </div>
+        <div class="section-title mb-4" style="color:var(--danger)">Needs Improvement ⚠️</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${['Closures','Async','Prototypes'].map(s=>`<span class="badge badge-medium" style="font-size:13px">${s}</span>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title mb-4">Suggested Next Steps</div>
+        ${['Advanced Closures Deep Dive','Async/Await Masterclass','Prototype Chain Practice'].map(t=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--lavender-light);border-radius:10px;margin-bottom:8px;cursor:pointer">
+            ${icon('book',15,'var(--blue)')}
+            <span style="font-size:13.5px;font-weight:500">${t}</span>
+            ${icon('arrow',13,'var(--accent)')}
+          </div>`).join('')}
+        <button class="btn btn-primary btn-sm mt-4">${icon('chat',14,'white')} Ask AI About My Results</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── CHATBOT PAGE ───────────────────────────────────────────
+let chatMessages=[{role:'ai',content:"Hi! I'm your AI Interview Coach powered by Claude. I can help you with mock interview questions, study plans, resume tips, and more. What would you like to work on today?"}];
+let chatTyping=false;
+
+function renderChatbot(mc){
+  mc.innerHTML=`
+  <div>
+    <div class="h2 mb-4">AI Interview Coach</div>
+    <div class="chat-wrap">
+      <div class="chat-sidebar">
+        <div class="card" style="padding:16px">
+          <div style="font-size:12px;font-weight:700;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase;letter-spacing:.8px">Context</div>
+          <div style="background:var(--lavender-light);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px;font-weight:500;color:var(--blue);display:flex;align-items:center;gap:8px;margin-bottom:8px;border:1.5px solid var(--lavender)">${icon('test',14,'var(--blue)')} Use last test results</div>
+          <div style="background:var(--lavender-light);border-radius:10px;padding:10px 12px;cursor:pointer;font-size:13px;font-weight:500;color:var(--blue);display:flex;align-items:center;gap:8px;border:1.5px solid var(--lavender)">${icon('profile',14,'var(--blue)')} Share my profile</div>
+        </div>
+        <div class="card" style="padding:16px;flex:1;overflow:hidden;display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;margin-bottom:12px;align-items:center">
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.8px">History</div>
+            <button class="btn btn-secondary btn-sm" style="padding:4px 10px;font-size:11px">+ New</button>
+          </div>
+          <div style="overflow:auto;flex:1">
+            ${[{title:'System Design study plan',date:'Yesterday'},{title:'JS interview questions',date:'2 days ago'},{title:'Resume feedback session',date:'Last week'}].map((h,i)=>`
+              <div style="padding:10px;border-radius:9px;cursor:pointer;margin-bottom:6px;background:${i===0?'var(--lavender-light)':'transparent'}">
+                <div style="font-size:13px;font-weight:500;margin-bottom:3px">${h.title}</div>
+                <div style="font-size:11px;color:var(--text-muted)">${h.date}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="card card-navy" style="padding:16px">
+          <div style="font-size:13px;font-weight:600;color:white;margin-bottom:8px">Need deeper help?</div>
+          <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:12px">Book a 1:1 session with an interview expert</div>
+          <button class="btn btn-primary btn-sm w-full" style="justify-content:center;font-size:12px" onclick="navigate('consultation')">${icon('video',13,'white')} Book Consultation</button>
+        </div>
+      </div>
+      <div class="chat-main">
+        <div class="chat-header">
+          <div style="width:36px;height:36px;border-radius:10px;background:rgba(99,132,250,0.25);display:flex;align-items:center;justify-content:center">${icon('lightning',18,'var(--lavender)')}</div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-weight:700;color:white;font-size:14px">SkillVault AI Coach</div>
+            <div style="display:flex;align-items:center;gap:6px"><div class="chat-dot"></div><span style="font-size:11.5px;color:rgba(255,255,255,0.55)">Online · Powered by Claude</span></div>
+          </div>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-chips">
+          ${['Generate mock interview questions','Create a study plan for my target role','Review my resume summary','Explain my weak topic from test results'].map(p=>`
+            <div class="chip" style="font-size:12px;padding:5px 12px" onclick="chatSend('${p}')">${p}</div>`).join('')}
+        </div>
+        <div class="chat-composer">
+          <input class="input" id="chatInput" placeholder="Ask about interview prep, study plans, career guidance..." style="flex:1" onkeydown="if(event.key==='Enter')chatSend()" />
+          <button class="btn btn-primary" style="padding:10px 16px" onclick="chatSend()">${icon('send',16,'white')}</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+  renderChatMessages();
+}
+
+function renderChatMessages(){
+  const el=document.getElementById('chatMessages');
+  if(!el) return;
+  el.innerHTML=chatMessages.map(m=>`
+    <div class="chat-bubble ${m.role}" style="white-space:pre-wrap">
+      ${m.role==='ai'?`<div class="sender">SkillVault AI</div>`:''}
+      ${m.content}
+    </div>`).join('');
+  if(chatTyping) el.innerHTML+=`<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  el.scrollTop=el.scrollHeight;
+}
+
+async function chatSend(text){
+  const input=document.getElementById('chatInput');
+  const msg=text||(input?input.value:'');
+  if(!msg.trim()||chatTyping) return;
+  if(input) input.value='';
+  chatMessages.push({role:'user',content:msg});
+  chatTyping=true;
+  renderChatMessages();
+  try{
+    const apiMessages=chatMessages.slice(0,-1).map(m=>({role:m.role==='ai'?'assistant':'user',content:m.content}));
+    apiMessages.push({role:'user',content:msg});
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:"You are SkillVault's AI Interview Coach. You help users prepare for job interviews. Be concise, practical, and encouraging. Keep responses to 2-4 paragraphs max. Use bullet points for lists. Focus on actionable advice.",
+        messages:apiMessages
+      })
+    });
+    const data=await res.json();
+    const reply=data.content?.map(b=>b.text||'').join('')||"I'm here to help! Could you tell me more about what you're looking for?";
+    chatMessages.push({role:'ai',content:reply});
+  }catch{
+    chatMessages.push({role:'ai',content:"I'm here to help with your interview prep! Ask me about mock questions, study plans, or career guidance."});
+  }
+  chatTyping=false;
+  renderChatMessages();
+}
+
+// ── CONSULTATION PAGE ──────────────────────────────────────
+let consultView='dashboard';
+let selectedService=null;
+let selectedSlot=null;
+const SERVICES=[
+  {id:1,icon:'🎯',title:'1:1 Interview Prep',desc:'Live mock interview with expert feedback',price:'₹999',duration:'60 min',color:'var(--accent)'},
+  {id:2,icon:'📄',title:'Resume Review',desc:'Deep-dive review with ATS optimization',price:'₹499',duration:'45 min',color:'var(--success)'},
+  {id:3,icon:'🧭',title:'Career Guidance',desc:'Career path planning and roadmap session',price:'₹799',duration:'60 min',color:'var(--warning)'},
+];
+
+function renderConsultation(mc){
+  if(consultView==='booking') renderConsultBooking(mc);
+  else renderConsultDashboard(mc);
+}
+
+function renderConsultDashboard(mc){
+  mc.innerHTML=`
+  <div class="fade-up">
+    <div class="h2 mb-6">Consultation</div>
+    <div class="section-title mb-4">Choose a Service</div>
+    <div class="grid-3" style="margin-bottom:28px">
+      ${SERVICES.map(s=>`
+        <div class="card" style="cursor:pointer;border-top:3px solid ${s.color}">
+          <div style="font-size:32px;margin-bottom:12px">${s.icon}</div>
+          <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px">${s.title}</div>
+          <div style="font-size:13px;color:var(--text-muted);margin-bottom:14px;line-height:1.5">${s.desc}</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <span class="badge badge-blue">${icon('clock',11)} ${s.duration}</span>
+            <span style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:${s.color}">${s.price}</span>
+          </div>
+          <button class="btn btn-primary btn-sm w-full" style="justify-content:center" onclick="openBooking(${s.id})">Book Now</button>
+        </div>`).join('')}
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="section-title mb-4">Upcoming Sessions</div>
+        <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:44px;height:44px;border-radius:12px;background:var(--lavender-light);display:flex;align-items:center;justify-content:center">${icon('video',20,'var(--blue)')}</div>
+            <div>
+              <div style="font-weight:700;font-size:14px">1:1 Interview Prep</div>
+              <div style="font-size:12.5px;color:var(--text-muted)">with Rahul Sharma · Tomorrow, 4:00 PM</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <span class="badge badge-success">Confirmed</span>
+            <button class="btn btn-primary btn-sm">${icon('video',13,'white')} Join</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-title mb-4">Past Sessions</div>
+        ${[{title:'Resume Review',mentor:'Priya Mehta',time:'May 1, 2:00 PM',score:'4.9 ⭐'},{title:'Career Guidance',mentor:'Amit Singh',time:'Apr 25, 3:00 PM',score:'4.7 ⭐'}].map(s=>`
+          <div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div style="display:flex;align-items:center;gap:12px">
+              <div style="width:44px;height:44px;border-radius:12px;background:var(--lavender-light);display:flex;align-items:center;justify-content:center">${icon('check',20,'var(--success)')}</div>
+              <div>
+                <div style="font-weight:700;font-size:14px">${s.title}</div>
+                <div style="font-size:12.5px;color:var(--text-muted)">with ${s.mentor} · ${s.time}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span style="font-size:13px">${s.score}</span>
+              <button class="btn btn-secondary btn-sm">View Notes</button>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function openBooking(id){
+  selectedService=SERVICES.find(s=>s.id===id);
+  selectedSlot=null;
+  consultView='booking';
+  renderPage('consultation');
+}
+
+function renderConsultBooking(mc){
+  const s=selectedService;
+  const slots=['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+  const unavail=[1,4,6];
+  mc.innerHTML=`
+  <div class="fade-up">
+    <button onclick="consultView='dashboard';renderPage('consultation')" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:20px">← Back</button>
+    <div class="h2 mb-6">Book: ${s.title}</div>
+    <div class="grid-2">
+      <div>
+        <div class="card mb-4">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+            <div style="font-size:28px">${s.icon}</div>
+            <div>
+              <div style="font-family:'Syne',sans-serif;font-weight:700">${s.title}</div>
+              <div style="font-size:13px;color:var(--text-muted)">${s.desc}</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px">
+            <span class="badge badge-blue">${icon('clock',11)} ${s.duration}</span>
+            <span style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:${s.color}">${s.price}</span>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-weight:700;margin-bottom:14px;font-size:14px">Select Date & Time</div>
+          <div style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto">
+            ${['Today','Tomorrow','Thu','Fri','Sat'].map((d,i)=>`
+              <div style="padding:8px 16px;border-radius:10px;border:1.5px solid ${i===1?'var(--accent)':'var(--gray-light)'};background:${i===1?'var(--lavender-light)':'white'};color:${i===1?'var(--blue)':'var(--text-muted)'};font-size:13px;font-weight:600;cursor:pointer;flex-shrink:0">${d}</div>`).join('')}
+          </div>
+          <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text-muted)">Available Slots</div>
+          <div class="slot-grid">
+            ${slots.map((sl,i)=>`
+              <div class="slot${unavail.includes(i)?' unavailable':''}${selectedSlot===sl?' selected':''}" onclick="selectSlot('${sl}')">
+                ${sl}${unavail.includes(i)?`<div style="font-size:10px;color:var(--danger)">Taken</div>`:''}
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card mb-4">
+          <div style="font-weight:700;margin-bottom:14px;font-size:14px">Your Details</div>
+          ${[['Full Name','text','Arjun Kapoor'],['Email','email','arjun@example.com'],['Phone','tel','+91 98765 43210']].map(([l,t,ph])=>`
+            <div style="margin-bottom:14px">
+              <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block">${l}</label>
+              <input class="input" type="${t}" value="${ph}" />
+            </div>`).join('')}
+          <div>
+            <label style="font-size:13px;font-weight:600;margin-bottom:6px;display:block">Goal for this session</label>
+            <textarea class="input" rows="3" placeholder="What do you want to focus on?" style="resize:none"></textarea>
+          </div>
+        </div>
+        <div class="card card-navy">
+          <div style="font-family:'Syne',sans-serif;font-weight:700;color:white;font-size:15px;margin-bottom:12px">Booking Summary</div>
+          ${[['Service',s.title],['Duration',s.duration],['Time',selectedSlot||'Not selected'],['Price',s.price]].map(([l,v])=>`
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;color:rgba(255,255,255,0.8)">
+              <span style="color:rgba(255,255,255,0.55)">${l}</span><span style="font-weight:600">${v}</span>
+            </div>`).join('')}
+          <div class="glow-line"></div>
+          <button class="btn btn-primary w-full" style="justify-content:center" ${!selectedSlot?'disabled':''} onclick="consultView='dashboard';renderPage('consultation')">Confirm Booking ✓</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function selectSlot(sl){selectedSlot=sl;renderPage('consultation')}
+
+// ── COMPANIES PAGE ─────────────────────────────────────────
+const COMPANIES=[
+  {name:'Google',color:'#4285F4',roles:'SWE, PM, Data',tests:12},
+  {name:'Microsoft',color:'#00A4EF',roles:'SWE, Cloud, PM',tests:10},
+  {name:'Amazon',color:'#FF9900',roles:'SDE, PM, Data',tests:15},
+  {name:'Meta',color:'#0082FB',roles:'SWE, ML, PM',tests:9},
+  {name:'Flipkart',color:'#F7A600',roles:'SDE, PM, Data',tests:8},
+  {name:'Infosys',color:'#007CC2',roles:'Engineering, Analyst',tests:7},
+  {name:'TCS',color:'#990000',roles:'Engineering, IT',tests:6},
+  {name:'Wipro',color:'#9B2335',roles:'Engineering, IT',tests:6},
+  {name:'Zomato',color:'#E23744',roles:'SDE, Product, DS',tests:5},
+  {name:'Swiggy',color:'#FC8019',roles:'SDE, Product',tests:5},
+  {name:'PhonePe',color:'#5F259F',roles:'SDE, Data, PM',tests:4},
+  {name:"BYJU'S",color:'#014AF0',roles:'Engineering, Content',tests:4},
+];
+
+function renderCompanies(mc){
+  mc.innerHTML=`
+  <div class="fade-up">
+    <div style="background:linear-gradient(135deg,var(--navy),var(--navy-light));border-radius:20px;padding:36px 40px;margin-bottom:28px">
+      <div style="text-align:center">
+        <div style="font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:white;margin-bottom:10px">Top Companies</div>
+        <div style="font-size:15px;color:rgba(255,255,255,0.65);max-width:500px;margin:0 auto 24px">Our candidates prepare with industry-aligned practice tests modeled on real interview patterns from top companies.</div>
+        <div style="display:flex;justify-content:center;gap:24px">
+          ${[['500+','Candidates placed'],['50+','Companies covered'],['95%','Satisfaction rate']].map(([v,l])=>`
+            <div style="text-align:center">
+              <div style="font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--lavender)">${v}</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.55)">${l}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="section-title mb-4">Company Interview Prep</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px">
+      ${COMPANIES.map(c=>`
+        <div class="card" style="cursor:pointer;flex-direction:column;align-items:flex-start;gap:10px;padding:18px 20px;transition:all .2s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 16px rgba(59,130,246,0.12)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <div style="display:flex;justify-content:space-between;width:100%;align-items:center">
+            <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:${c.color}">${c.name}</div>
+            <span class="badge badge-blue" style="font-size:11px">${c.tests} tests</span>
+          </div>
+          <div style="font-size:12.5px;color:var(--text-muted)">${c.roles}</div>
+          <button class="btn btn-secondary btn-sm" style="font-size:12px" onclick="navigate('tests')">View Tests →</button>
+        </div>`).join('')}
+    </div>
+    <div class="card" style="background:linear-gradient(135deg,var(--lavender-light),white);border:1px solid var(--lavender);text-align:center;padding:32px 40px">
+      <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:8px">Ready to get hired?</div>
+      <div style="color:var(--text-muted);margin-bottom:20px;font-size:14px">Start with a mock test aligned to your target company's interview style</div>
+      <button class="btn btn-primary btn-lg" onclick="navigate('tests')">Start a Company Mock Test ${icon('arrow',16,'white')}</button>
+    </div>
+  </div>`;
+}
+
+// ── PROFILE PAGE ───────────────────────────────────────────
+function renderProfile(mc){
+  const skills=[{name:'JavaScript',val:78},{name:'System Design',val:55},{name:'DSA',val:65},{name:'React',val:82},{name:'SQL',val:70}];
+  mc.innerHTML=`
+  <div class="fade-up">
+    <div class="h2 mb-6">My Profile</div>
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+          <div class="profile-avatar">AK</div>
+          <div>
+            <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800">Arjun Kapoor</div>
+            <div style="color:var(--text-muted);font-size:13px">Software Engineer · Fresher</div>
+            <div style="color:var(--accent);font-size:12.5px;margin-top:2px">arjun.kapoor@email.com</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="margin-left:auto">Edit</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          ${[['Target Role','Full Stack Dev'],['Domain','Engineering'],['Experience','Fresher (0-1 yr)'],['Location','Bangalore']].map(([l,v])=>`
+            <div style="background:var(--lavender-light);border-radius:10px;padding:10px 12px">
+              <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px">${l}</div>
+              <div style="font-weight:600;font-size:13.5px">${v}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title mb-4">Subscription Plan</div>
+        <div style="background:linear-gradient(135deg,var(--navy),var(--navy-light));border-radius:14px;padding:20px;margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--lavender);margin-bottom:4px">Current Plan</div>
+              <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:white">Pro Monthly</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--lavender)">₹299</div>
+              <div style="font-size:12px;color:rgba(255,255,255,0.5)">/month</div>
+            </div>
+          </div>
+          <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;font-size:12.5px">
+            <span style="color:rgba(255,255,255,0.6)">Renews June 6, 2026</span>
+            <span style="color:var(--success)">Active ✓</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-secondary btn-sm">Manage Plan</button>
+          <button class="btn btn-primary btn-sm">${icon('lightning',13,'white')} Upgrade</button>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2" style="margin-bottom:24px">
+      <div class="card">
+        <div class="section-title mb-4">Skill Proficiency</div>
+        ${skills.map(s=>`
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">
+              <span style="font-weight:500">${s.name}</span>
+              <span style="font-weight:700;color:${s.val>=75?'var(--success)':s.val>=60?'var(--accent)':'var(--warning)'}">${s.val}%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill" style="width:${s.val}%;background:linear-gradient(90deg,${s.val>=75?'var(--success)':s.val>=60?'var(--accent)':'var(--warning)'},var(--accent-glow))"></div></div>
+          </div>`).join('')}
+      </div>
+      <div>
+        <div class="card mb-4">
+          <div class="section-title mb-4">Progress Overview</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            ${[['8','Tests Completed','var(--accent)'],['72%','Avg Readiness','var(--success)'],['14','AI Sessions','var(--blue)'],['2','Consultations','var(--warning)']].map(([v,l,c])=>`
+              <div style="text-align:center;background:var(--lavender-light);border-radius:12px;padding:14px">
+                <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:${c}">${v}</div>
+                <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px">${l}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="card">
+          <div class="section-title mb-3">Saved Tests</div>
+          ${['System Design Interview','DSA Advanced','React Deep Dive'].map(t=>`
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:var(--lavender-light);border-radius:9px;margin-bottom:8px;cursor:pointer">
+              <div style="display:flex;align-items:center;gap:8px">${icon('book',14,'var(--blue)')}<span style="font-size:13px;font-weight:500">${t}</span></div>
+              ${icon('arrow',13,'var(--accent)')}
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── INIT ───────────────────────────────────────────────────
+renderOnboard();
+</script>
+</body>
+</html>
+`;
